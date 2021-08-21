@@ -6,7 +6,7 @@ import os
 import sys
 import pandas as pd
 
-taskID = sys.argv[1]
+taskID = sys.argv[0]
 
 def csvVerifier(tasknum, path, answer):
     try:

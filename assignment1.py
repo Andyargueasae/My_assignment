@@ -7,19 +7,52 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import json
+import csv
 
 # You should use these two variable to refer the location of the JSON data file and the folder containing the news articles.
 # Under no circumstances should you hardcode a path to the folder on your computer (e.g. C:\Chris\Assignment\data\data.json) as this path will not exist on any machine but yours.
 datafilepath = 'data/data.json'
 articlespath = 'data/football'
 
+#The task1 is finished!!
 def task1():
     #Complete task 1 here
-    return
+    with open('data/data.json') as fjson:
+        data=json.load(fjson)
+    list_tc = data['teams_codes']
+    list_tc = sorted(list_tc)
+    return list_tc
     
 def task2():
     #Complete task 2 here
-    return
+    with open('data/data.json') as fjson:
+        data=json.load(fjson)
+    list_tc = data['teams_codes']
+    list_tc = sorted(list_tc)
+    clubs = data['clubs']
+    #print(clubs)
+    goalscore = []
+    goalconc = []
+    
+    for i in list_tc:
+        for j in clubs:
+            if j['club_code'] == i:
+                goalscore.append(j["goals_scored"])
+                goalconc.append(j["goals_conceded"])
+   
+    #print(goalscore)
+    #print(goalconc)
+        
+    t2_out = open("task2.csv", 'w')
+    output = csv.writer(t2_out)
+    headings = ["team_code","goals_scored_by_team", "goals_scored_against_team"]
+    output.writerow(headings)
+    for i in range(0, len(list_tc)):
+        row = [list_tc[i], goalscore[i], goalconc[i]]
+        output.writerow(row)
+    t2_out.close()
+    return 
       
 def task3():
     #Complete task 3 here
