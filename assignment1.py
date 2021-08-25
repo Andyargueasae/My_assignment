@@ -13,6 +13,7 @@ import csv
 import os
 import re
 import math
+import seaborn as sns
 
 # You should use these two variable to refer the location of the JSON data file and the folder containing the news articles.
 # Under no circumstances should you hardcode a path to the folder on your computer (e.g. C:\Chris\Assignment\data\data.json) as this path will not exist on any machine but yours.
@@ -74,7 +75,7 @@ def task3():
     
     #print(file_score)
     os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment")
-    task3_out = open("task3.csv", "w", newline = '')
+    task3_out = open("task3.csv", "w", newline ='')
     t3 = csv.writer(task3_out)
     headings = ['filename', 'total goals']
     t3.writerow(headings)
@@ -99,7 +100,7 @@ def find_goal(filename):
             count += int(j)
         sum_sc.append(count)
         count = 0
-        
+    file.close()
     return max(sum_sc)
 
 def task4():       #objective complete!
@@ -199,25 +200,51 @@ def task6():
     read = csv.reader(file)
     head = next(read)
     data = list(read)
-    print(len(data))
-    file.close()
     
-    sims = []
+    name_list = []
+    for i in data:
+        name_list.append(i[0])
+    #print(name_list)
+    sims = {}
+    dirs = os.listdir(articlespath)
     
+    for i in range(len(data)):
+        sims[data[i][0]] = []
+        for j in range(len(data)):
+            interact = co_check(data[i][0], data[j][0], dirs)
+            #print(interact)
+            similarity = calculate_sim_score(data[i], data[j], interact)
+            sims[data[i][0]].append(similarity)
+    
+    #print(sims)
+    sim_data = pd.DataFrame(sims, index = name_list)
+    #print(sim_data)        
+    sns.heatmap(sim_data, cmap = 'viridis', xticklabels=True)
+    plt.savefig("task6.png", dpi = 300)
+    plt.show()
     return
 
-def sim_score(club1, club2, filetrace):
-    sim_scores = 0
-    name1 = club1[0]
-    name2 = club2[0]
-    ment1 = club1[-1]
-    ment2 = club2[-1]
-    
-    return sim_scores
-
-def double_check(pattern1, pattern2, filename):
-    co_exist = 1
+def co_check(pattern1, pattern2, filenames):
+    co_exist = 0
+    for i in filenames:
+        element = open(articlespath+'/'+i, 'r')
+        strings = element.read()
+        p1_scores = re.findall(pattern1, strings)
+        p2_scores = re.findall(pattern2, strings)
+        if (pattern1 in p1_scores) and (pattern2 in p2_scores):
+            co_exist += 1
+        element.close()
+            
     return co_exist
+
+def calculate_sim_score(list1, list2, shared):
+    score = 0
+    denom = int(list1[-1])+int(list2[-1])
+    if denom == 0:
+        return 0
+    else:    
+        score = ((2*shared)/(denom))
+    return score
 
 def task7():
     #Complete task 7 here
