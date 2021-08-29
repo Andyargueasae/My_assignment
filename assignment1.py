@@ -179,6 +179,7 @@ def task5():
     plt.xticks(arange(len(list_tn)), list_tn, rotation = 90)
     plt.ylabel("The number of mentions")
     plt.title("The number of mentions of each team by media")
+    plt.rcParams["figure.figsize"] = (3, 3)
     plt.savefig("task5.png", dpi = 300)
     plt.show()
     return
@@ -216,12 +217,11 @@ def task6():
             #print(interact)
             similarity = calculate_sim_score(data[i], data[j], interact)
             sims[data[i][0]].append(similarity)
-    
-    #print(sims)
+
     sim_data = pd.DataFrame(sims, index = name_list)
-    #print(sim_data)        
     sns.heatmap(sim_data, cmap = 'viridis', xticklabels=True)
-    plt.savefig("task6.png", dpi = 300)
+    plt.rcParams["figure.figsize"] = (3, 3)
+    plt.savefig("task6.png", dpi = 500)
     plt.show()
     return
 
@@ -273,7 +273,7 @@ def task7():
     plt.xlabel("number of articles mentioning club")
     plt.ylabel("number of goals scored by club")
     plt.grid(True)
-    plt.savefig("task7.png", dpi = 300)
+    plt.savefig("task7.png", dpi = 500)
     plt.show()
     return
     
