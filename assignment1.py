@@ -12,12 +12,10 @@ import json
 import csv
 import os
 import re
-import math
 import seaborn as sns
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-import string
 from sklearn.feature_extraction.text import TfidfTransformer
 from numpy.linalg import norm
 
@@ -110,9 +108,7 @@ def find_goal(filename):
 def task4():       #objective complete!
     #Complete task 4 here
     dirs = os.listdir(articlespath)
-    print(dirs)
     file_score = []
-    #print(find_goal(dirs[211]))
     for i in dirs:
         goals = find_goal(i)
         file_score.append(goals)
@@ -121,7 +117,7 @@ def task4():       #objective complete!
     #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment")
     plt.boxplot(file_score)
     plt.ylabel("Total goals")
-    plt.xlabel("text1_to_text265")
+    plt.xlabel("All texts")
     plt.title("Total goals distribution from the texts")
     plt.savefig("task4.png", dpi=300)
     plt.show()
@@ -156,15 +152,12 @@ def task5():
     clubdic = {}
     for i in list_tn:
         clubdic[i] = 0
-    #print(clubdic)
     
     dirs = os.listdir(articlespath)
     for i in clubdic.keys():
         for j in dirs:
             count_mention(j, i, clubdic)
     
-    #print(clubdic)    
-    #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment")
     task5_out = open("task5.csv", "w", newline = '')
     t5 = csv.writer(task5_out)
     headings = ["club_name", "number_of_mentions"]
@@ -179,7 +172,6 @@ def task5():
     plt.xticks(arange(len(list_tn)), list_tn, rotation = 90)
     plt.ylabel("The number of mentions")
     plt.title("The number of mentions of each team by media")
-    plt.rcParams["figure.figsize"] = (3, 3)
     plt.savefig("task5.png", dpi = 300)
     plt.show()
     return
@@ -197,7 +189,7 @@ def task6():
     #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment/data/football")
     #filepath = r'E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment/data/football'
     dirs = os.listdir(articlespath)
-    task5()
+    #task5()
     file = open("task5.csv", 'r')
     read = csv.reader(file)
     head = next(read)
@@ -220,7 +212,6 @@ def task6():
 
     sim_data = pd.DataFrame(sims, index = name_list)
     sns.heatmap(sim_data, cmap = 'viridis', xticklabels=True)
-    plt.rcParams["figure.figsize"] = (3, 3)
     plt.savefig("task6.png", dpi = 500)
     plt.show()
     return
@@ -249,8 +240,8 @@ def calculate_sim_score(list1, list2, shared):
 
 def task7():
     #Complete task 7 here
-    task2()
-    task5()
+    #task2()
+    #task5()
     data_goal = open("task2.csv", 'r')
     data_mention = open("task5.csv", 'r')
     goal = csv.reader(data_goal)
