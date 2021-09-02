@@ -13,7 +13,6 @@ import csv
 import os
 import re
 import seaborn as sns
-import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -24,7 +23,6 @@ from numpy.linalg import norm
 datafilepath = 'data/data.json'
 articlespath = 'data/football'
 
-#The task1 is finished!!
 def task1():
     #Complete task 1 here
     with open(datafilepath) as fjson:
@@ -56,7 +54,8 @@ def task2():
         
     t2_out = open("task2.csv", 'w', newline = '')
     output = csv.writer(t2_out)
-    headings = ["team_code","goals_scored_by_team", "goals_scored_against_team"]
+    headings = ["team_code","goals_scored_by_team", 
+                "goals_scored_against_team"]
     output.writerow(headings)
     for i in range(0, len(list_tc)):
         row = [list_tc[i], goalscore[i], goalconc[i]]
@@ -136,7 +135,6 @@ def stat_check(lscore):
     print(lscore[int(med)])
     k3 = (len(lscore)-1)*0.75+1
     print(lscore[int(k3)])
-    #IQR = lscore[int(k3)]-lscore[int(k1)]
     outlier = 0
     for i in lscore:
         if i > 3+1.5*3:
@@ -168,12 +166,16 @@ def task5():
     task5_out.close()
     
     team_mention = clubdic.values()
+    plt.subplots(figsize = (25,16))
     plt.bar(arange(len(team_mention)), team_mention)
-    plt.xticks(arange(len(list_tn)), list_tn, rotation = 90)
-    plt.ylabel("The number of mentions")
-    plt.title("The number of mentions of each team by media")
+    plt.xticks(arange(len(list_tn)), list_tn, rotation = 45, fontsize = 13)
+    plt.ylabel("The number of mentions", fontsize = 25)
+    plt.xlabel("Club Names", fontsize = 15)
+    plt.title("The number of mentions of each team by media", 
+              fontdict = {'weight':'normal','size':25})
     plt.savefig("task5.png", dpi = 300)
     plt.show()
+    plt.close()
     return
 
 def count_mention(filename, pattern, Dict):
@@ -186,10 +188,7 @@ def count_mention(filename, pattern, Dict):
 
 def task6():
     #Complete task 6 here, will be done on 8.25.
-    #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment/data/football")
-    #filepath = r'E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment/data/football'
     dirs = os.listdir(articlespath)
-    #task5()
     file = open("task5.csv", 'r')
     read = csv.reader(file)
     head = next(read)
@@ -198,7 +197,6 @@ def task6():
     name_list = []
     for i in data:
         name_list.append(i[0])
-    #print(name_list)
     sims = {}
     dirs = os.listdir(articlespath)
     
@@ -206,14 +204,17 @@ def task6():
         sims[data[i][0]] = []
         for j in range(len(data)):
             interact = co_check(data[i][0], data[j][0], dirs)
-            #print(interact)
             similarity = calculate_sim_score(data[i], data[j], interact)
             sims[data[i][0]].append(similarity)
 
     sim_data = pd.DataFrame(sims, index = name_list)
-    sns.heatmap(sim_data, cmap = 'viridis', xticklabels=True)
+    plt.subplots(figsize = (18,15))
+    sns.heatmap(sim_data, cmap = 'rocket_r', xticklabels=True)
+    plt.xticks(fontsize = 14, rotation = 60)
+    plt.yticks(fontsize = 14)
     plt.savefig("task6.png", dpi = 500)
     plt.show()
+    plt.close()
     return
 
 def co_check(pattern1, pattern2, filenames):
@@ -240,8 +241,6 @@ def calculate_sim_score(list1, list2, shared):
 
 def task7():
     #Complete task 7 here
-    #task2()
-    #task5()
     data_goal = open("task2.csv", 'r')
     data_mention = open("task5.csv", 'r')
     goal = csv.reader(data_goal)
@@ -255,21 +254,19 @@ def task7():
     data_mention.close()
     goal_list = [int(i[1]) for i in goals]
     mention_list = [int(j[-1]) for j in mentions]
-    #print(goal_list)
-    #print(mention_list)
-    plt.scatter(mention_list, goal_list,color = "red", alpha = 0.6)
-    plt.xlim(0,100)
-    plt.ylim(0, 14)
+    plt.scatter(goal_list, mention_list,color = "red", alpha = 0.6)
+    plt.xlim(0,14)
+    plt.ylim(0, 100)
     plt.title("Relationship of frequency of mention and goals scored by club")
-    plt.xlabel("number of articles mentioning club")
-    plt.ylabel("number of goals scored by club")
+    plt.ylabel("number of articles mentioning club")
+    plt.xlabel("number of goals scored by club")
     plt.grid(True)
     plt.savefig("task7.png", dpi = 500)
     plt.show()
     return
     
 def task8(filename):
-    #Complete task 8 here, 截止8月31日，需完成至此。
+    #Complete task 8 here
     file = open(filename, 'r')
     strings = file.read()
     #ensure only white spaces in between.
@@ -315,7 +312,7 @@ def remove_while_retain(strings):
 '''    
 
 def task9():
-    #Complete task 9 here，于9月3日之前完成。
+    #Complete task 9 here
     dirs = os.listdir(articlespath)
     wordbags = {}
     all_words = []
@@ -353,8 +350,6 @@ def task9():
 
 def construct_frequency(word_bank, values):
     tfreq = []
-    
-    #iterate over all dicts for each file.
     for i in values:
         file_count = []
         file_words = list(i.keys())
@@ -374,10 +369,8 @@ def calculate_tfidf(raw_tf):
     return docs_arr
 
 def count_dict(word_bag):
-    #采集空字典。
     wordDict = {}
     for word in word_bag:
-        #有词加一，无词添一。
         if word not in wordDict:
             wordDict[word] = 1
         else:
@@ -387,9 +380,6 @@ def count_dict(word_bag):
 def cos_sim(v1, v2):
     result = np.dot(v1, v2)/(norm(v1)*norm(v2))
     return format(result, '.16f')
-
-
-
 
 def answer_check(filename):
     out = task8(filename)

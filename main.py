@@ -39,7 +39,7 @@ def task9verifier(tasknum, path, answer):
             print(answer)
     except:
         print('Unable to open ' + path + '.  File may not exist')
-
+                                            
 def verifytask1():
     task1out = task1()
     answer = ['ARS', 'BHA', 'BOU', 'BUR', 'CAR', 'CHE', 'CRY', 'EVE', 'FUL', 'HUD', 'LEI', 'LIV', 'MCI', 'MUN', 'NEW', 'SOU', 'TOT', 'WAT', 'WHU', 'WOL']
