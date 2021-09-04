@@ -115,6 +115,7 @@ def task4():
     
     print(stat_check(file_score))
     #plot the boxplot and set the labels, titles for axis.
+    plt.subplots(figsize = (9,12))
     plt.boxplot(file_score)
     plt.ylabel("Total goals")
     plt.xlabel("All texts")
