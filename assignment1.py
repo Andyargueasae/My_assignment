@@ -327,6 +327,7 @@ def pre_processing(wordlist):
 def task9():
     #Complete task 9 here
     dirs = os.listdir(articlespath)
+    dirs = sorted(dirs)
     wordbags = {}
     all_words = []
     #Iterate over the folders and create a sum wordbags.
