@@ -13,6 +13,7 @@ import csv
 import os
 import re
 import seaborn as sns
+import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -67,6 +68,7 @@ def task3():
     #iterate the data folder, find the maximum score for each file. 
     dirs = os.listdir(articlespath)
     file_score = []
+    dirs = sorted(dirs)
     for i in dirs:
         goals = find_goal(i)
         file_score.append(goals)
@@ -287,6 +289,8 @@ def task8(filename):
     #Complete task 8 here
     file = open(filename, 'r')
     strings = file.read()
+    nltk.download('punkt')
+    nltk.download('stopwords')
     #ensure only white spaces in between.
     for i in strings:
         if i.isdigit():
