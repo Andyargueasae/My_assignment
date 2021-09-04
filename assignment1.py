@@ -29,7 +29,7 @@ def task1():
         data=json.load(fjson)
     list_tc = data['teams_codes']
     list_tc = sorted(list_tc)
-    #Done.
+    #return the list of teamcodes.
     return list_tc
     
 def task2():
@@ -39,19 +39,17 @@ def task2():
     list_tc = data['teams_codes']
     list_tc = sorted(list_tc)
     clubs = data['clubs']
-    #print(clubs)
     goalscore = []
     goalconc = []
     
+    #iterate over the team information and store their goals.
     for i in list_tc:
         for j in clubs:
             if j['club_code'] == i:
                 goalscore.append(j["goals_scored"])
                 goalconc.append(j["goals_conceded"])
    
-    #print(goalscore)
-    #print(goalconc)
-        
+    #Now write them in csv files.
     t2_out = open("task2.csv", 'w', newline = '')
     output = csv.writer(t2_out)
     headings = ["team_code","goals_scored_by_team", 
@@ -66,16 +64,14 @@ def task2():
       
 def task3():
     #Complete task 3 here
+    #iterate the data folder, find the maximum score for each file. 
     dirs = os.listdir(articlespath)
-    #Now you have obtained the filenames dirs in the directory.
     file_score = []
-    #print(find_goal(dirs[211]))
     for i in dirs:
         goals = find_goal(i)
         file_score.append(goals)
     
-    #print(file_score)
-    #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment")
+    #Write them in the csv file.
     task3_out = open("task3.csv", "w", newline ='')
     t3 = csv.writer(task3_out)
     headings = ['filename', 'total goals']
@@ -87,6 +83,10 @@ def task3():
     return
 
 def find_goal(filename):
+    '''
+    Using the regular expresion, find the maximum sum of goals
+    in each file.
+    '''
     file = open(articlespath + '/' + filename, 'r')
     strings = file.read()
     match = r'\D[0-9]{1,2}\-[0-9]{1,2}'
@@ -104,25 +104,28 @@ def find_goal(filename):
     file.close()
     return max(sum_sc)
 
-def task4():       #objective complete!
+def task4():
     #Complete task 4 here
+    #store the goals sum for each file.
     dirs = os.listdir(articlespath)
     file_score = []
     for i in dirs:
         goals = find_goal(i)
         file_score.append(goals)
     
-    #print(stat_check(file_score))   
-    #os.chdir("E:/2021 SM 2 2021.7--11/assignments/EODP/individual/My_assignment")
+    print(stat_check(file_score))
+    #plot the boxplot and set the labels, titles for axis.
     plt.boxplot(file_score)
     plt.ylabel("Total goals")
     plt.xlabel("All texts")
     plt.title("Total goals distribution from the texts")
     plt.savefig("task4.png", dpi=300)
     plt.show()
+    plt.close()
     return
 
 def stat_check(lscore):
+    #A companion function that checks the statistical distribution.
     count = 0
     lscore = sorted(lscore)
     for i in range(len(lscore)):
@@ -142,7 +145,8 @@ def stat_check(lscore):
     return outlier
 
 def task5():
-    #Complete task 5 here, completed.
+    #Complete task 5 here
+    #Store the names for each club first.
     with open(datafilepath) as fjson:
         data=json.load(fjson)
     list_tn = data["participating_clubs"]
@@ -150,12 +154,13 @@ def task5():
     clubdic = {}
     for i in list_tn:
         clubdic[i] = 0
-    
+    #count the number of mentions for each club.
     dirs = os.listdir(articlespath)
     for i in clubdic.keys():
         for j in dirs:
             count_mention(j, i, clubdic)
     
+    #Now write them in the csv file.
     task5_out = open("task5.csv", "w", newline = '')
     t5 = csv.writer(task5_out)
     headings = ["club_name", "number_of_mentions"]
@@ -165,6 +170,7 @@ def task5():
         t5.writerow(rows)
     task5_out.close()
     
+    #now produce the bar chart of the mentions.
     team_mention = clubdic.values()
     plt.subplots(figsize = (25,16))
     plt.bar(arange(len(team_mention)), team_mention)
@@ -179,6 +185,7 @@ def task5():
     return
 
 def count_mention(filename, pattern, Dict):
+    #individually count the mention of one club in articles.
     file = open(articlespath+'/'+filename, 'r')
     strings = file.read()
     findings = re.findall(pattern, strings)
@@ -187,27 +194,31 @@ def count_mention(filename, pattern, Dict):
     return
 
 def task6():
-    #Complete task 6 here, will be done on 8.25.
+    #Complete task 6 here
+    #Read in files first.
     dirs = os.listdir(articlespath)
     file = open("task5.csv", 'r')
     read = csv.reader(file)
     head = next(read)
     data = list(read)
-    
+    #store the names of clubs.
     name_list = []
     for i in data:
         name_list.append(i[0])
     sims = {}
     dirs = os.listdir(articlespath)
     
+    #pairing those clubs and calculate the similarity scores of the pair.
     for i in range(len(data)):
         sims[data[i][0]] = []
         for j in range(len(data)):
             interact = co_check(data[i][0], data[j][0], dirs)
             similarity = calculate_sim_score(data[i], data[j], interact)
             sims[data[i][0]].append(similarity)
-
+        
+    #Make the dataframe for producing the heatmap.
     sim_data = pd.DataFrame(sims, index = name_list)
+    #set the size and write in information.
     plt.subplots(figsize = (18,15))
     sns.heatmap(sim_data, cmap = 'rocket_r', xticklabels=True)
     plt.xticks(fontsize = 14, rotation = 60)
@@ -218,6 +229,7 @@ def task6():
     return
 
 def co_check(pattern1, pattern2, filenames):
+    #count the number of articles both mentioning two clubs.
     co_exist = 0
     for i in filenames:
         element = open(articlespath+'/'+i, 'r')
@@ -231,6 +243,7 @@ def co_check(pattern1, pattern2, filenames):
     return co_exist
 
 def calculate_sim_score(list1, list2, shared):
+    #calculate similarity scores for a pair.
     score = 0
     denom = int(list1[-1])+int(list2[-1])
     if denom == 0:
@@ -241,6 +254,7 @@ def calculate_sim_score(list1, list2, shared):
 
 def task7():
     #Complete task 7 here
+    #extract the goals and mentions from preserved files.
     data_goal = open("task2.csv", 'r')
     data_mention = open("task5.csv", 'r')
     goal = csv.reader(data_goal)
@@ -249,20 +263,23 @@ def task7():
     goals = list(goal)
     head_m = next(mention)
     mentions = list(mention)
-    
     data_goal.close()
     data_mention.close()
+    
+    #store the information in list and plot.
     goal_list = [int(i[1]) for i in goals]
     mention_list = [int(j[-1]) for j in mentions]
     plt.scatter(goal_list, mention_list,color = "red", alpha = 0.6)
     plt.xlim(0,14)
     plt.ylim(0, 100)
+    #show the title, x/y axis and grids.
     plt.title("Relationship of frequency of mention and goals scored by club")
     plt.ylabel("number of articles mentioning club")
     plt.xlabel("number of goals scored by club")
     plt.grid(True)
     plt.savefig("task7.png", dpi = 500)
     plt.show()
+    plt.close()
     return
     
 def task8(filename):
@@ -273,9 +290,9 @@ def task8(filename):
     for i in strings:
         if i.isdigit():
             strings = strings.replace(i, ' ')
-    #strings = remove_while_retain(strings)
     strings = re.sub(r"[^a-zA-Z]", ' ', strings)
     limit = 127
+    #If there are any strings which are misread as other characters, delete it.
     for i in strings:
         if ord(i) > limit:
             strings = re.sub(i, ' ', strings)
@@ -283,7 +300,6 @@ def task8(filename):
     strings = ' '.join(strings.split())
     #divide the strings into tokens, words bag created.
     words = word_tokenize(strings)
-    #slice out those which are punctuations and numbers.
     words = pre_processing(words)
     #Remove stopwords.
     stopWords = set(stopwords.words('english'))
@@ -292,31 +308,23 @@ def task8(filename):
     #remove single-character strings.
     newlst = [i for i in remaining if len(i) > 1]
     file.close()
+    #done.
     return newlst
 
 def pre_processing(wordlist):
+    #this is the function to remove any items that are non-alphabetic.
     newlist = []
     for i in wordlist:
         if i.isalpha():
             newlist.append(i)
     return newlist
 
-'''
-def remove_while_retain(strings):
-    puncs = string.punctuation
-    punc = list(puncs)
-    punc.append('\n')
-    for i in punc:
-        strings = strings.replace(i, ' ')
-    return strings
-'''    
-
 def task9():
     #Complete task 9 here
     dirs = os.listdir(articlespath)
     wordbags = {}
     all_words = []
-    #Iterate over the folders and create wordbags for each text.
+    #Iterate over the folders and create a sum wordbags.
     for i in dirs:
         filename = articlespath+'/'+i
         elemental = task8(filename)
@@ -324,19 +332,23 @@ def task9():
         all_words+=elemental
         wordbags[i] = results
     
+    #based on the wordbags, create the list of raw counts for each file.
     all_words = set(all_words)
     keys = list(wordbags.keys())
     vals = list(wordbags.values())
-    #print(vals)
     raw_count = construct_frequency(all_words, vals)
+    #then, produce the tfidf table.
     docs = calculate_tfidf(raw_count)
     rows = []
     
+    #compare two files and do the calculation.
     for i in range(0, len(keys)):
         for j in range(i+1, len(keys)):
             sim_score = cos_sim(docs[i], docs[j])
             rows.append([keys[i], keys[j], sim_score])
+    #sort the rows in descending order.
     rows = sorted(rows, key = lambda x:x[-1], reverse = True)
+    #write the files.
     file = open("task9.csv", 'w', newline = '')
     task9_out = csv.writer(file)
     heading = ['article1', 'article2', 'similarity']
@@ -345,10 +357,12 @@ def task9():
     for i in range(0, top_ten):
         task9_out.writerow(rows[i])
     file.close()
-    
+    #done.
     return
 
 def construct_frequency(word_bank, values):
+    '''Make a list of raw counts for each words in wordbag, 
+    stored for each file.'''
     tfreq = []
     for i in values:
         file_count = []
@@ -363,12 +377,14 @@ def construct_frequency(word_bank, values):
     return tfreq
     
 def calculate_tfidf(raw_tf):
+    #return an array of tfidf values.
     transformer = TfidfTransformer()
     tfidf = transformer.fit_transform(raw_tf)
     docs_arr = tfidf.toarray()
     return docs_arr
 
 def count_dict(word_bag):
+    #count the presence of words in each file.
     wordDict = {}
     for word in word_bag:
         if word not in wordDict:
@@ -378,342 +394,6 @@ def count_dict(word_bag):
     return wordDict
 
 def cos_sim(v1, v2):
+    #return the cosine similarity for a pair.
     result = np.dot(v1, v2)/(norm(v1)*norm(v2))
     return format(result, '.16f')
-
-def answer_check(filename):
-    out = task8(filename)
-    answer = ['man',
-     'utd',
-     'stroll',
-     'cup',
-     'win',
-     'wayne',
-     'rooney',
-     'made',
-     'winning',
-     'return',
-     'everton',
-     'manchester',
-     'united',
-     'cruised',
-     'fa',
-     'cup',
-     'quarter',
-     'finals',
-     'rooney',
-     'received',
-     'hostile',
-     'reception',
-     'goals',
-     'half',
-     'quinton',
-     'fortune',
-     'cristiano',
-     'ronaldo',
-     'silenced',
-     'jeers',
-     'goodison',
-     'park',
-     'fortune',
-     'headed',
-     'home',
-     'minutes',
-     'ronaldo',
-     'scored',
-     'nigel',
-     'martyn',
-     'parried',
-     'paul',
-     'scholes',
-     'free',
-     'kick',
-     'marcus',
-     'bent',
-     'missed',
-     'everton',
-     'best',
-     'chance',
-     'roy',
-     'carroll',
-     'later',
-     'struck',
-     'missile',
-     'saved',
-     'feet',
-     'rooney',
-     'return',
-     'always',
-     'going',
-     'potential',
-     'flashpoint',
-     'involved',
-     'angry',
-     'exchange',
-     'spectator',
-     'even',
-     'kick',
-     'rooney',
-     'every',
-     'touch',
-     'met',
-     'deafening',
-     'chorus',
-     'jeers',
-     'crowd',
-     'idolised',
-     'year',
-     'old',
-     'everton',
-     'started',
-     'brightly',
-     'fortune',
-     'needed',
-     'alert',
-     'scramble',
-     'away',
-     'header',
-     'bent',
-     'near',
-     'goal',
-     'line',
-     'cue',
-     'united',
-     'take',
-     'complete',
-     'control',
-     'supreme',
-     'passing',
-     'display',
-     'goodison',
-     'park',
-     'pitch',
-     'cutting',
-     'fortune',
-     'gave',
-     'united',
-     'lead',
-     'minutes',
-     'rising',
-     'meet',
-     'ronaldo',
-     'cross',
-     'eight',
-     'yards',
-     'portuguese',
-     'youngster',
-     'allowed',
-     'much',
-     'time',
-     'space',
-     'hapless',
-     'gary',
-     'naysmith',
-     'united',
-     'dominated',
-     'without',
-     'creating',
-     'many',
-     'clear',
-     'cut',
-     'chances',
-     'almost',
-     'paid',
-     'price',
-     'making',
-     'domination',
-     'two',
-     'minutes',
-     'half',
-     'time',
-     'mikel',
-     'arteta',
-     'played',
-     'superb',
-     'ball',
-     'area',
-     'bent',
-     'played',
-     'onside',
-     'gabriel',
-     'heintze',
-     'hesitated',
-     'carroll',
-     'plunged',
-     'fee',
-     'save',
-     'united',
-     'almost',
-     'doubled',
-     'lead',
-     'minutes',
-     'ronaldo',
-     'low',
-     'drive',
-     'yards',
-     'took',
-     'deflection',
-     'tony',
-     'hibbert',
-     'martyn',
-     'dived',
-     'save',
-     'brilliantly',
-     'martyn',
-     'came',
-     'everton',
-     'rescue',
-     'three',
-     'minutes',
-     'later',
-     'rooney',
-     'big',
-     'moment',
-     'almost',
-     'arrived',
-     'raced',
-     'clean',
-     'veteran',
-     'keeper',
-     'outstanding',
-     'form',
-     'nothing',
-     'martyn',
-     'could',
-     'united',
-     'doubled',
-     'lead',
-     'minutes',
-     'doubled',
-     'advantage',
-     'scholes',
-     'free',
-     'kick',
-     'took',
-     'deflection',
-     'martyn',
-     'could',
-     'parry',
-     'ball',
-     'ronaldo',
-     'reacted',
-     'first',
-     'score',
-     'easily',
-     'everton',
-     'problems',
-     'worsened',
-     'james',
-     'mcfadden',
-     'limped',
-     'injury',
-     'may',
-     'trouble',
-     'ahead',
-     'everton',
-     'goalkeeper',
-     'carroll',
-     'required',
-     'treatment',
-     'struck',
-     'head',
-     'missile',
-     'thrown',
-     'behind',
-     'goal',
-     'rooney',
-     'desperate',
-     'search',
-     'goal',
-     'return',
-     'everton',
-     'halted',
-     'martyn',
-     'injury',
-     'time',
-     'outpaced',
-     'stubbs',
-     'martyn',
-     'denied',
-     'england',
-     'striker',
-     'manchester',
-     'united',
-     'coach',
-     'sir',
-     'alex',
-     'ferguson',
-     'fantastic',
-     'performance',
-     'us',
-     'fairness',
-     'think',
-     'everton',
-     'missed',
-     'couple',
-     'players',
-     'got',
-     'young',
-     'players',
-     'boy',
-     'ronaldo',
-     'fantastic',
-     'player',
-     'persistent',
-     'never',
-     'gives',
-     'know',
-     'many',
-     'fouls',
-     'gets',
-     'wants',
-     'ball',
-     'truly',
-     'fabulous',
-     'player',
-     'everton',
-     'martyn',
-     'hibbert',
-     'yobo',
-     'stubbs',
-     'naysmith',
-     'osman',
-     'carsley',
-     'arteta',
-     'kilbane',
-     'mcfadden',
-     'bent',
-     'subs',
-     'wright',
-     'pistone',
-     'weir',
-     'plessis',
-     'vaughan',
-     'manchester',
-     'united',
-     'carroll',
-     'gary',
-     'neville',
-     'brown',
-     'ferdinand',
-     'heinze',
-     'ronaldo',
-     'phil',
-     'neville',
-     'keane',
-     'scholes',
-     'fortune',
-     'rooney',
-     'subs',
-     'howard',
-     'giggs',
-     'smith',
-     'miller',
-     'spector',
-     'referee',
-     'styles',
-     'hampshire']
-    print(len(answer))
-    diffs = [i for i in answer if not i in out]
-    print(len(diffs))
-    return 
