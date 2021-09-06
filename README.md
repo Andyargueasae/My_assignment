@@ -8,4 +8,4 @@ Student name: Yuhao Tong
 >>>>>>> 
 >>>>>>> List of dependencies: nltk, numpy, numpy.linalg, sns.seaborn, matplotlib.pyplot, re, os, numpy.arange, json, csv, pandas, sklearn.feature_extraction.text
 >>>>>>> 
->>>>>>> description: The project analyses the information provided by json files and text files, to output a summary of information about soccer matches of clubs from English Premier League. The functions including: output the list of clubs, analyze the matching and scores of clubs, and report the mentions of clubs, interpret the relationships between clubs score and mentions by media.
+>>>>>>> description: The project analyses the information provided by json files and text files, to output a summary of information about soccer matches of clubs from English Premier League. The output is mainly focused on counting the values of scores, analyzing the distribution of data through visualization, and provide an interpretation of it. Finally, the program would also illustrate the similarities of files in pairs.
