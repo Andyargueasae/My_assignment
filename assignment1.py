@@ -134,7 +134,7 @@ def stat_check(lscore):
     for i in range(len(lscore)):
         if lscore[i]==0:
             count+=1
-    print(count)
+    #print(count)
     k1 = (len(lscore)-1)*0.25+1
     print(lscore[int(k1)])
     med = (len(lscore)-1)*0.5+1
@@ -142,10 +142,13 @@ def stat_check(lscore):
     k3 = (len(lscore)-1)*0.75+1
     print(lscore[int(k3)])
     outlier = 0
+    empty = []
     for i in lscore:
         if i > 3+1.5*3:
+            empty.append(i)
             outlier += 1
-    return outlier
+    outlier
+    return empty
 
 def task5():
     #Complete task 5 here
