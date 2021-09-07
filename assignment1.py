@@ -32,11 +32,14 @@ def task1():
         data=json.load(fjson)
     list_tc = data['teams_codes']
     list_tc = sorted(list_tc)
-    #return the list of teamcodes.
+    #return the list of teamcodes from the collection of clubs.
     return list_tc
     
 def task2():
     #Complete task 2 here
+    '''
+    Output the csv file that contains the goals scored and lost by each club.
+    '''
     with open(datafilepath) as fjson:
         data=json.load(fjson)
     list_tc = data['teams_codes']
@@ -67,6 +70,9 @@ def task2():
       
 def task3():
     #Complete task 3 here
+    '''
+    Find the soccer score matches from a collection of articles.
+    '''
     #iterate the data folder, find the maximum score for each file. 
     dirs = os.listdir(articlespath)
     file_score = []
@@ -129,6 +135,9 @@ def task4():
     return
 
 def task5():
+    '''
+    returns a graph summarizing the total mentions of club by media.
+    '''
     #Complete task 5 here
     #Store the names for each club first.
     with open(datafilepath) as fjson:
@@ -180,6 +189,10 @@ def count_mention(filename, pattern, Dict):
 def task6():
     #Complete task 6 here
     #Read in files first.
+    '''
+    Produces a heatmap that analyzes the co-existance 
+    between clubs in articles.
+    '''
     dirs = os.listdir(articlespath)
     file = open("task5.csv", 'r')
     read = csv.reader(file)
@@ -237,6 +250,10 @@ def calculate_sim_score(list1, list2, shared):
     return score
 
 def task7():
+    '''
+    Produces a scatterplot that visualizes the relationship
+    between mentions and scores of club.
+    '''
     #Complete task 7 here
     #extract the goals and mentions from preserved files.
     data_goal = open("task2.csv", 'r')
@@ -268,6 +285,10 @@ def task7():
     
 def task8(filename):
     #Complete task 8 here
+    '''
+    The function returns a list of words in a text file, with 
+    non-alphabetic items removed and stopwords cleared.
+    '''
     file = open(filename, 'r')
     strings = file.read()
     #ensure only white spaces in between.
@@ -305,6 +326,10 @@ def pre_processing(wordlist):
 
 def task9():
     #Complete task 9 here
+    '''
+    The function returns a rank of top 10 article pairs by their similarity
+    scores.
+    '''
     dirs = os.listdir(articlespath)
     dirs = sorted(dirs)
     wordbags = {}
