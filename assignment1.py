@@ -23,6 +23,8 @@ from numpy.linalg import norm
 # Under no circumstances should you hardcode a path to the folder on your computer (e.g. C:\Chris\Assignment\data\data.json) as this path will not exist on any machine but yours.
 datafilepath = 'data/data.json'
 articlespath = 'data/football'
+nltk.download('punkt')
+nltk.download('stopwords')
 
 def task1():
     #Complete task 1 here
@@ -268,8 +270,6 @@ def task8(filename):
     #Complete task 8 here
     file = open(filename, 'r')
     strings = file.read()
-    nltk.download('punkt')
-    nltk.download('stopwords')
     #ensure only white spaces in between.
     for i in strings:
         if i.isdigit():
