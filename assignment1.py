@@ -218,7 +218,7 @@ def task6():
     #set the size and write in information.
     plt.subplots(figsize = (18,15))
     sns.heatmap(sim_data, cmap = 'rocket_r', xticklabels=True)
-    plt.xticks(fontsize = 14, rotation = 60)
+    plt.xticks(fontsize = 13, rotation = 60)
     plt.yticks(fontsize = 14)
     plt.savefig("task6.png", dpi = 500)
     plt.show()
