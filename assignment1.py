@@ -198,6 +198,7 @@ def task6():
     read = csv.reader(file)
     head = next(read)
     data = list(read)
+    file.close()
     #store the names of clubs.
     name_list = []
     for i in data:
